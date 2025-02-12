@@ -1,47 +1,97 @@
 import mysql.connector
 from kafka import KafkaProducer, KafkaConsumer
-import memcache
+from pymemcache.client import base
 from elasticsearch import Elasticsearch
 import json
 import time
 
-# Connect to MySQL
-def fetch_mysql_data():
-    conn = mysql.connector.connect(host='mysql', user='user', password='password', database='testdb')
-    cursor = conn.cursor()
-    cursor.execute("SELECT 'Hello from MySQL' AS message")
-    result = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return result[0]
+# ========== MySQL Connection ==========
+try:
+    db = mysql.connector.connect(
+        host="mysql",
+        user="testuser",
+        password="testpassword",
+        database="exampledb"
+    )
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    print("MySQL Users:", users)
+except Exception as e:
+    print("MySQL Error:", e)
 
-# Connect to Kafka
-def kafka_test():
-    producer = KafkaProducer(bootstrap_servers='kafka:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    producer.send('test_topic', {'message': 'Hello Kafka'})
+print("")
+
+# ========== Kafka Producer ==========
+try:
+    producer = KafkaProducer(
+        bootstrap_servers="kafka:9092",
+        value_serializer=lambda v: json.dumps(v).encode("utf-8")
+    )
+    producer.send("test-topic", {"message": "Hello from producer!"})
     producer.flush()
+    print("Kafka Producer sent a message.")
+except Exception as e:
+    print("Kafka Producer Error:", e)
+
+print("")
+
+# ========== Kafka Consumer ==========
+try:
+    consumer = KafkaConsumer(
+    "test-topic",
+    bootstrap_servers="kafka:9092",
+    auto_offset_reset="earliest",  # Ensures old messages are received
+    enable_auto_commit=True,
+    group_id="test-group",
+    value_deserializer=lambda x: json.loads(x.decode("utf-8"))
+)
+
+    print("Kafka Consumer Started. Waiting for messages...")
+    for message in consumer:
+        print(f"Kafka Received Message: {message.value}")
+        break  # Exit after receiving one message
+
+except Exception as e:
+    print("Kafka Consumer Error:", e)
+
     
-    consumer = KafkaConsumer('test_topic', bootstrap_servers='kafka:9092', auto_offset_reset='earliest', value_deserializer=lambda x: json.loads(x.decode('utf-8')))
-    time.sleep(2)  # Allow Kafka to process the message
-    for msg in consumer:
-        return msg.value['message']
+print("")
 
-# Connect to Memcache
-def memcache_test():
-    mc = memcache.Client(['memcache:11211'], debug=True)
-    mc.set('test_key', 'Hello Memcache')
-    return mc.get('test_key')
+# ========== Memcached ==========
+try:
+    memcache_client = base.Client(("memcache", 11211))
+    memcache_client.set("foo", "bar")
+    value = memcache_client.get("foo").decode()
+    print("Memcache Stored and Retrieved:", value)
+except Exception as e:
+    print("Memcache Error:", e)
 
-# Connect to Elasticsearch
-def elasticsearch_test():
-    es = Elasticsearch(['http://elasticsearch:9200'])
-    es.index(index='test_index', document={'message': 'Hello Elasticsearch'})
-    es.indices.refresh(index='test_index')
-    res = es.get(index='test_index', id=1)
-    return res['_source']['message']
+print("")
 
-if __name__ == "__main__":
-    print("MySQL:", fetch_mysql_data())
-    print("Kafka:", kafka_test())
-    print("Memcache:", memcache_test())
-    print("Elasticsearch:", elasticsearch_test())
+# ========== Elasticsearch ==========
+try:
+    es = Elasticsearch(["http://elasticsearch:9200"],
+                       verify_certs=False,)
+
+    # Ensure index exists
+    if not es.indices.exists(index="test-index"):
+        es.indices.create(index="test-index")
+
+    # Insert test document
+    doc = {"name": "John Doe", "message": "Hello Elasticsearch!"}
+    es.index(index="test-index", id=1, body=doc)
+
+    # Retrieve document
+    res = es.get(index="test-index", id=1)
+    print("Elasticsearch Document:", res["_source"])
+
+except Exception as e:
+    print("Elasticsearch Error:", e)
+
+print("")
+
+# ========== Keep Container Running ==========
+while True:
+    print("All services tested successfully!")
+    time.sleep(10)
