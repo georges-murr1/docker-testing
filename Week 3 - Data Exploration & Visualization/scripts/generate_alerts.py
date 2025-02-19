@@ -72,10 +72,10 @@ def ensure_table_exists():
         conn.commit()
         cursor.close()
         conn.close()
-        print("✅ Checked: 'alerts' table exists or created successfully.")
+        print("Checked: 'alerts' table exists or created successfully.")
 
     except mysql.connector.Error as e:
-        print(f"❌ MySQL Error while creating table: {e}")
+        print(f"MySQL Error while creating table: {e}")
 
 
 # Insert alerts into MySQL database
@@ -100,10 +100,10 @@ def insert_into_mysql(alert):
         conn.commit()
         cursor.close()
         conn.close()
-        print(f"✅ Inserted into MySQL: {alert}")
+        print(f"Inserted into MySQL: {alert}")
 
     except mysql.connector.Error as e:
-        print(f"❌ MySQL Error: {e}")
+        print(f"MySQL Error: {e}")
 
 
 # Publish to Kafka
@@ -113,10 +113,10 @@ def publish_to_kafka(alert):
         producer = Producer(KAFKA_CONFIG)
         producer.produce(KAFKA_TOPIC, json.dumps(alert).encode('utf-8'))
         producer.flush()
-        print(f"✅ Published to Kafka: {alert}")
+        print(f"Published to Kafka: {alert}")
 
     except Exception as e:
-        print(f"❌ Kafka Error: {e}")
+        print(f"Kafka Error: {e}")
 
 
 # Store in Elasticsearch
@@ -125,10 +125,10 @@ def store_in_elasticsearch(alert):
     try:
         es = Elasticsearch(**ES_CONFIG)
         es.index(index=ES_INDEX, body=alert)
-        print(f"✅ Stored in Elasticsearch: {alert}")
+        print(f"Stored in Elasticsearch: {alert}")
 
     except Exception as e:
-        print(f"❌ Elasticsearch Error: {e}")
+        print(f"Elasticsearch Error: {e}")
 
 
 # Main Execution
