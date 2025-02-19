@@ -1,0 +1,11 @@
+[
+    {
+        "alert_id": "1234abcd",
+        "alert_type": "Unauthorized Access",
+        "timestamp": "2024-02-19T12:34:56Z",
+        "severity": "High",
+        "source_ip": "192.168.1.10",
+        "destination_ip": "10.0.0.5",
+        "description": "Unauthorized login attempt detected."
+    }
+]
