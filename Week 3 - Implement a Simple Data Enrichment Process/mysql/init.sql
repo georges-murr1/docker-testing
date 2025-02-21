@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS alert_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    source VARCHAR(255),
+    severity INT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
