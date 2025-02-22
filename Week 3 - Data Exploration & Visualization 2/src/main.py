@@ -11,15 +11,18 @@ def main():
         print("Data loading failed. Please check the CSV file.")
         return
     
-    # Generate and display/save the graphs
+    # Generate graphs
     plot_alert_frequency(data)
     plot_top_alerts(data)
+
+    # test_es_queries()
     
-    # Run Elasticsearch query only if the environment variable RUN_ELASTICSEARCH is set to "true"
-    if os.environ.get("RUN_ELASTICSEARCH", "false").lower() == "true":
+    # Ask the user if they want to run Elasticsearch queries
+    run_es = input("Do you want to run Elasticsearch queries? (Y/n): ").strip().lower()
+    if run_es == 'y' or run_es == '':
         test_es_queries()
     else:
-        print("Skipping Elasticsearch queries. To run them, set RUN_ELASTICSEARCH=true in your environment.")
+        print("Skipping Elasticsearch queries.")
 
 if __name__ == "__main__":
     main()
