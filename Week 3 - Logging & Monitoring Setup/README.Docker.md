@@ -1,3 +1,11 @@
+
+Access the services:
+FastAPI App: http://localhost:8000
+Prometheus: http://localhost:9090
+Grafana: http://localhost:3000 (default login: admin / admin)
+
+
+
 ### Building and running your application
 
 When you're ready, start your application by running:
