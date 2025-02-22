@@ -1,0 +1,6 @@
+timestamp,alert_type,severity,message
+2025-02-20 10:15:00,Unauthorized Access,Critical,User admin failed login 5 times
+2025-02-20 10:20:00,Malware Detected,High,Malicious file detected in /tmp
+2025-02-20 10:30:00,Failed Login,Medium,User guest attempted login
+2025-02-20 11:00:00,Phishing Attempt,High,Suspicious email detected
+2025-02-20 11:15:00,Data Exfiltration,Critical,Large data transfer detected

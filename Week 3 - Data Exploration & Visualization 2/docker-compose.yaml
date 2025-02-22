@@ -7,12 +7,25 @@
 # You can add other services your application may depend on here, such as a
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
+version: "3.9"
 services:
-  server:
-    build:
-      context: .
+  app:
+    build: .
+    volumes:
+      - ./:/app
+    depends_on:
+      - elasticsearch
     ports:
-      - 8000:8000
+      - "5000:5000"  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
+
+
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

@@ -1,0 +1,6 @@
+pandas
+matplotlib
+seaborn
+elasticsearch==7.17.0
+jupyter
+pytest
